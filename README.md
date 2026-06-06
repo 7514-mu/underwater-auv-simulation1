@@ -168,10 +168,10 @@ ros2 run uuv_teleop vehicle_keyboard_teleop --ros-args \
 ros2 launch underwater_bubble_sim ocean_bubbles.launch.py
 ```
 
-### 故障注入
+### 故障注入（需先启动 Gazebo + RexROV + 控制系统）
 
 ```bash
-ros2 launch uuv_fault_injection fault_injection.launch.py
+source ~/.zshrc && python3 ~/ros2_ws/interactive_fault_injector_fixed.py
 ```
 
 ---

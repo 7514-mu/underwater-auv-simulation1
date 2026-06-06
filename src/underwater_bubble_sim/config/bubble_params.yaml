@@ -1,0 +1,60 @@
+# =============================================================================
+# Bubble Simulation Parameters
+# =============================================================================
+# 【理论依据】
+#  动力学:
+#   1. Morison方程: F_drag = 0.5 × ρ × Cd × A_eff × v²
+#   2. Archimedes原理: ΔF_buoyancy = ρ_water × g × V_bubble
+#   3. Stokes粘性阻力: F_drift ∝ α × v_bubble × μ × A
+#   4. Clift et al. (1978): 气泡终端速度、阻力系数经验数据
+#   5. Mendelson (1967): 气泡上升速度关联式
+#  光学:
+#   6. Beer-Lambert定律: I = I₀ × exp(-μL)
+#   7. Mie散射理论: 胡峻霖 (2017) 水下尾流气泡多次散射
+#   8. Smith & Baker (1981): 海水光谱衰减数据
+# =============================================================================
+
+/**:
+  ros__parameters:
+    # =========================================================================
+    # Bubble Generator Settings
+    # =========================================================================
+    # 自然尾流气泡尺寸: 0.1mm~5mm (胡峻霖 2017; Clift 1978)
+    # 本配置取 1~5mm 为典型工作范围
+    # Gazebo 中 visual_scale 放大显示以保证可见性
+    spawn_rate: 30.0          # 每秒生成气泡数
+    max_bubbles: 200          # 最大同时存在气泡数
+    min_radius: 0.001         # 最小气泡半径 (m) - 1mm
+    max_radius: 0.005         # 最大气泡半径 (m) - 5mm
+    visual_scale: 10.0        # Gazebo显示放大倍数 (5mm物理 → 50mm显示)
+    rise_speed: 0.3           # 气泡上升速度 (m/s) - Clift (1978) mm级气泡终端速度
+    source_x: 0.0             # 气泡源中心 X
+    source_y: 0.0             # 气泡源中心 Y
+    source_z: -20.0           # 气泡源中心 Z (深度)
+    source_range: 5.0         # 气泡源扩散范围 (m)
+
+    # =========================================================================
+    # Image Processing Settings (光学效应)
+    # =========================================================================
+    # 散射: Mie散射理论 (胡峻霖 2017), PSF近似高斯分布
+    # 衰减: Beer-Lambert定律 I=I₀exp(-μL)
+    # 水下光谱: 红光衰减 > 绿光 > 蓝光 (Smith & Baker 1981)
+    bubble_density: 0.3       # 气泡密度因子 (0.0 = 无气泡, 1.0 = 最大密度)
+    scattering_strength: 3.0  # 散射模糊强度
+    attenuation: 0.85         # 整体光衰减系数
+    red_attenuation: 0.6      # 红色通道额外衰减
+    noise_level: 0.03         # 散斑噪声强度
+
+    # =========================================================================
+    # Bubble Dynamics Settings (力学效应)
+    # =========================================================================
+    # 体积分数: α = bubble_density × α_factor (α_factor=0.15)
+    # 阻力: A_eff = A_base × (1 + K_AREA × α), K_AREA=2.5 (Clift 1978 范围2.0~3.5)
+    # 浮力: ΔF = ρgV, V_bubble = V_robot × α (Archimedes)
+    # 漂移: F = C_DRIFT × α × v_bubble × μ × A, C_DRIFT=120 (Stokes推导)
+    # 扰动: 随机力脉冲, k=40N (气泡碰撞/破裂简化模型)
+    link_name: rexrov/base_link
+    rate: 10.0                # 更新频率 (Hz)
+    robot_volume: 0.5         # 机器人体积 (m³)
+    robot_cross_section: 0.3  # 机器人横截面积 (m²)
+    water_density: 998.2      # 水密度 (kg/m³) @ 20°C

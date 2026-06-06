@@ -1,0 +1,36 @@
+<launch>
+  <!-- 通用模型启动文件 - 只需改这里就能换模型 -->
+  <arg name="model_name" default="missile_auv"/>
+  <arg name="namespace" default="missile_auv"/>
+  <arg name="urdf_file" default="$(env HOME)/ros2_ws/missile_final.urdf"/>
+
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="-20"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <arg name="use_sim_time" default="true"/>
+
+  <group>
+    <push-ros-namespace namespace="$(var namespace)"/>
+
+    <!-- 直接使用URDF文件，不用xacro -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" exec="robot_state_publisher" respawn="true" output="screen">
+      <param name="robot_description" value="$(var urdf_file)"/>
+      <param name="use_sim_time" value="$(var use_sim_time)"/>
+    </node>
+
+    <!-- Spawn model in Gazebo -->
+    <node name="urdf_spawner" pkg="gazebo_ros" exec="spawn_entity.py" respawn="false" output="screen"
+          args="-gazebo_namespace /gazebo -x $(var x) -y $(var y) -z $(var z) -R $(var roll) -P $(var pitch) -Y $(var yaw) -entity $(var model_name) -file $(var urdf_file)"/>
+
+    <!-- TF发布 -->
+    <include file="$(find-pkg-share uuv_assistants)/launch/message_to_tf.launch">
+      <arg name="namespace" value="$(var namespace)"/>
+      <arg name="world_frame" value="world"/>
+      <arg name="child_frame_id" value="/$(var namespace)/base_link"/>
+    </include>
+  </group>
+</launch>

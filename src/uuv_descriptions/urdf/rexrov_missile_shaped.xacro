@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!--
+  导弹形RexROV - 保持所有RexROV的水动力学参数
+  只改变外形为圆柱体
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- includes -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>
+
+  <!-- Parameters - 完全使用RexROV的参数 -->
+  <xacro:property name="namespace" value="rexrov"/>
+  <xacro:property name="mass" value="1862.87"/>
+
+  <xacro:macro name="rexrov_missile_base" params="namespace *gazebo inertial_reference_frame">
+
+    <link name="${namespace}/base_link">
+      <!-- 完全使用RexROV的惯性参数 -->
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="525.39" ixy="1.44" ixz="33.41" iyy="794.20" iyz="2.6" izz="691.23"/>
+      </inertial>
+
+      <!-- 改为导弹形视觉外观（圆柱体） -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.5" length="2.6"/>
+        </geometry>
+        <material name="missile_yellow">
+          <color rgba="0.8 0.7 0.2 1.0"/>
+        </material>
+      </visual>
+
+      <!-- 碰撞外形也改为圆柱体 -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.5" length="2.6"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- 完全复制RexROV的水动力学参数 -->
+    <gazebo>
+      <plugin name="${namespace}_hydrodynamics" filename="libuuv_gazebo_hydro_udtfi_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <link_name>${namespace}/base_link</link_name>
+
+        <!-- RexROV的浮力参数 -->
+        <neutrally_buoyant>0</neutrally_buoyant>
+        <volume>1.83826</volume>
+        <center_of_buoyancy>0.0 0.0 0.3</center_of_buoyancy>
+
+        <hydrodynamic_model>
+          <type>fossen</type>
+          <!-- RexROV的附加质量 -->
+          <added_mass>
+             779.79 -6.8773 -103.32  8.5426 -165.54 -7.8033
+            -6.8773    1222   51.29  409.44 -5.8488  62.726
+            -103.32   51.29  3659.9  6.1112 -386.42  10.774
+             8.5426  409.44  6.1112   534.9 -10.027  21.019
+            -165.54 -5.8488 -386.42 -10.027  842.69 -1.1162
+            -7.8033  62.726  10.775  21.019 -1.1162  224.32
+          </added_mass>
+          <!-- RexROV的阻尼 -->
+          <linear_damping>
+            -74.82 -69.48 -728.4 -268.8 -309.77 -105
+          </linear_damping>
+          <quadratic_damping>
+            -748.22 -992.53 -1821.01 -672 -774.44 -523.27
+          </quadratic_damping>
+        </hydrodynamic_model>
+      </plugin>
+    </gazebo>
+
+    <!-- Set up hydrodynamic plugin -->
+    <xacro:insert_block name="gazebo"/>
+
+    <!-- Include RexROV actuators and sensors -->
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_actuators.xacro"/>
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_sensors.xacro"/>
+
+  </xacro:macro>
+
+</robot>

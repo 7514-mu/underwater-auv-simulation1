@@ -1,0 +1,31 @@
+# 水声通信仿真参数配置 (arlpy 增强版)
+
+acoustic_comm_simulator:
+  ros__parameters:
+    # 航行器
+    vehicle_1_namespace: "auv_1"
+    vehicle_2_namespace: "auv_2"
+
+    # 通信参数
+    frequency: 25000.0              # 载波频率 Hz
+    source_level: 180.0             # 发射声源级 dB re 1μPa @1m
+    noise_level: 70.0               # 环境噪声级 dB
+    directivity_index: 10.0         # 接收指向性指数 dB
+    packet_loss_threshold: 0.3      # 丢包 SNR 阈值 dB
+    bubble_noise_factor: 50.0       # 气泡噪声系数
+
+    # 海洋环境参数
+    temperature: 10.0               # 水温 °C
+    salinity: 35.0                  # 盐度 ppt
+    water_depth: 50.0               # 海底深度 m
+    ph: 8.1                         # 海水 pH
+    wind_speed: 3.0                 # 海面风速 m/s
+
+    # 海底参数
+    bottom_density: 1800.0          # 海底沉积物密度 kg/m³
+    bottom_soundspeed: 1600.0       # 海底声速 m/s
+    bottom_attenuation: 0.5         # 海底衰减 dB/wavelength
+
+    # 功能开关
+    enable_multipath: true          # 多径效应
+    enable_doppler: true            # 多普勒效应

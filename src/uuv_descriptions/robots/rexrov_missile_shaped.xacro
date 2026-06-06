@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+  导弹形RexROV完整模型
+  RexROV with missile-shaped appearance
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rexrov_missile">
+
+  <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_missile_shaped.xacro"/>
+
+  <xacro:rexrov_missile_base namespace="rexrov" inertial_reference_frame="world">
+    <gazebo>
+      <plugin name="rexrov_hydrodynamics" filename="libuuv_gazebo_hydro_udtfi_plugin.so">
+      </plugin>
+    </gazebo>
+  </xacro:rexrov_missile_base>
+
+</robot>

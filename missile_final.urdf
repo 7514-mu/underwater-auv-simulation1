@@ -1,0 +1,386 @@
+<?xml version="1.0"?>
+<robot name="missile_auv">
+  <!-- =============================================
+       主艇体 - 细长导弹主体
+       ============================================= -->
+  <link name="base_link">
+    <inertial>
+      <mass value="200.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="30" ixy="0" ixz="0" iyy="400" iyz="0" izz="400"/>
+    </inertial>
+
+    <!-- 主体 - 细长圆柱体 -->
+    <visual name="main_body">
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.15" length="3.0"/>
+      </geometry>
+      <material name="missile_gray">
+        <color rgba="0.3 0.35 0.4 1.0"/>
+      </material>
+    </visual>
+
+    <!-- 头锥 - 抛物线形状（用多个圆柱段模拟） -->
+    <visual name="nose_cone_1">
+      <origin xyz="1.6 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.12" length="0.3"/>
+      </geometry>
+      <material name="missile_red">
+        <color rgba="0.8 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="nose_cone_2">
+      <origin xyz="1.85 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.08" length="0.2"/>
+      </geometry>
+      <material name="missile_red">
+        <color rgba="0.8 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <visual name="nose_tip">
+      <origin xyz="2.0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.1"/>
+      </geometry>
+      <material name="missile_black">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+      </material>
+    </visual>
+
+    <!-- 尾锥 -->
+    <visual name="tail_cone">
+      <origin xyz="-1.6 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.12" length="0.2"/>
+      </geometry>
+      <material name="missile_gray">
+        <color rgba="0.3 0.35 0.4 1.0"/>
+      </material>
+    </visual>
+
+    <!-- 碰撞外形 - 简化为细长圆柱 -->
+    <collision name="collision">
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.15" length="3.0"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- =============================================
+       十字形尾翼
+       ============================================= -->
+  <!-- 尾翼1 - 上 -->
+  <link name="fin_1">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0.15 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+      <material name="missile_dark_gray">
+        <color rgba="0.25 0.25 0.25 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0.15 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fin_1_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="fin_1"/>
+    <origin xyz="-1.5 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 尾翼2 - 下 -->
+  <link name="fin_2">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 -0.15 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+      <material name="missile_dark_gray">
+        <color rgba="0.25 0.25 0.25 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.15 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fin_2_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="fin_2"/>
+    <origin xyz="-1.5 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 尾翼3 - 左 -->
+  <link name="fin_3">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.15 0 0" rpy="0 0 1.5708"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+      <material name="missile_dark_gray">
+        <color rgba="0.25 0.25 0.25 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.15 0 0" rpy="0 0 1.5708"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fin_3_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="fin_3"/>
+    <origin xyz="-1.5 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 尾翼4 - 右 -->
+  <link name="fin_4">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.15 0 0" rpy="0 0 1.5708"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+      <material name="missile_dark_gray">
+        <color rgba="0.25 0.25 0.25 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.15 0 0" rpy="0 0 1.5708"/>
+      <geometry>
+        <box size="0.05 0.3 0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="fin_4_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="fin_4"/>
+    <origin xyz="-1.5 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- =============================================
+       水动力参数 - 针对细长导弹优化
+       ============================================= -->
+  <gazebo>
+    <static>false</static>
+    <plugin name="hydrodynamics" filename="libuuv_underwater_object_ros_plugin.so">
+      <fluid_density>1028.0</fluid_density>
+      <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+      <link_name>base_link</link_name>
+
+      <!-- 浮力设置 -->
+      <neutrally_buoyant>0</neutrally_buoyant>
+      <volume>0.25</volume>
+      <center_of_buoyancy>0.0 0.0 0.05</center_of_buoyancy>
+
+      <!-- 导弹专用水动力参数 -->
+      <hydrodynamic_model>
+        <type>fossen</type>
+        <added_mass>
+           50.0     0.0     0.0     0.0     0.0     0.0
+           0.0   150.0     0.0     0.0     0.0     0.0
+           0.0     0.0   150.0     0.0     0.0     0.0
+           0.0     0.0     0.0    10.0    0.0     0.0
+           0.0     0.0     0.0    0.0    30.0     0.0
+           0.0     0.0     0.0    0.0     0.0    30.0
+        </added_mass>
+        <linear_damping>
+          -20.0   -80.0   -80.0   -10.0   -30.0   -30.0
+        </linear_damping>
+        <quadratic_damping>
+          -50.0   -200.0  -200.0  -30.0   -80.0   -80.0
+        </quadratic_damping>
+      </hydrodynamic_model>
+    </plugin>
+  </gazebo>
+
+  <!-- =============================================
+       IMU传感器
+       ============================================= -->
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo>
+    <plugin name="imu_plugin" filename="libuuv_gazebo_ros_imu_plugin.so">
+      <ros>
+        <namespace>missile_auv</namespace>
+      </ros>
+      <link_name>imu_link</link_name>
+      <sensor_topic>imu</sensor_topic>
+      <update_rate>50</update_rate>
+    </plugin>
+  </gazebo>
+
+  <!-- =============================================
+       姿态传感器
+       ============================================= -->
+  <gazebo>
+    <plugin name="pose_gt_plugin" filename="libuuv_gazebo_ros_pose_gt_plugin.so">
+      <ros>
+        <namespace>missile_auv</namespace>
+      </ros>
+      <link_name>base_link</link_name>
+      <sensor_topic>pose_gt</sensor_topic>
+      <update_rate>50</update_rate>
+    </plugin>
+  </gazebo>
+
+  <!-- =============================================
+       推进器 - 导弹式布局
+       主推进器在尾部，姿态控制推进器
+       ============================================= -->
+
+  <!-- 主推进器 - 尾部中央 -->
+  <gazebo>
+    <plugin name="main_thruster" filename="libuuv_thruster_plugin.so">
+      <thrusterID>0</thrusterID>
+      <link_name>main_thruster_link</link_name>
+      <commandTopic>/missile_auv/thrusters/id_0/input</commandTopic>
+      <thrustTopic>/missile_auv/thrusters/id_0/thrust</thrustTopic>
+      <maxThrust>800.0</maxThrust>
+      <minThrust>-200.0</minThrust>
+    </plugin>
+  </gazebo>
+  <link name="main_thruster_link">
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+  <joint name="main_thruster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="main_thruster_link"/>
+    <origin xyz="-1.7 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 顶部姿态推进器 -->
+  <gazebo>
+    <plugin name="thruster_top" filename="libuuv_thruster_plugin.so">
+      <thrusterID>1</thrusterID>
+      <link_name>thruster_top_link</link_name>
+      <commandTopic>/missile_auv/thrusters/id_1/input</commandTopic>
+      <thrustTopic>/missile_auv/thrusters/id_1/thrust</thrustTopic>
+      <maxThrust>100.0</maxThrust>
+      <minThrust>-100.0</minThrust>
+    </plugin>
+  </gazebo>
+  <link name="thruster_top_link">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="thruster_top_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="thruster_top_link"/>
+    <origin xyz="0 0.2 0" rpy="0 0 1.5708"/>
+  </joint>
+
+  <!-- 底部姿态推进器 -->
+  <gazebo>
+    <plugin name="thruster_bottom" filename="libuuv_thruster_plugin.so">
+      <thrusterID>2</thrusterID>
+      <link_name>thruster_bottom_link</link_name>
+      <commandTopic>/missile_auv/thrusters/id_2/input</commandTopic>
+      <thrustTopic>/missile_auv/thrusters/id_2/thrust</thrustTopic>
+      <maxThrust>100.0</maxThrust>
+      <minThrust>-100.0</minThrust>
+    </plugin>
+  </gazebo>
+  <link name="thruster_bottom_link">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="thruster_bottom_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="thruster_bottom_link"/>
+    <origin xyz="0 -0.2 0" rpy="0 0 1.5708"/>
+  </joint>
+
+  <!-- 左侧姿态推进器 -->
+  <gazebo>
+    <plugin name="thruster_left" filename="libuuv_thruster_plugin.so">
+      <thrusterID>3</thrusterID>
+      <link_name>thruster_left_link</link_name>
+      <commandTopic>/missile_auv/thrusters/id_3/input</commandTopic>
+      <thrustTopic>/missile_auv/thrusters/id_3/thrust</thrustTopic>
+      <maxThrust>100.0</maxThrust>
+      <minThrust>-100.0</minThrust>
+    </plugin>
+  </gazebo>
+  <link name="thruster_left_link">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="thruster_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="thruster_left_link"/>
+    <origin xyz="0 0 0.2" rpy="1.5708 0 0"/>
+  </joint>
+
+  <!-- 右侧姿态推进器 -->
+  <gazebo>
+    <plugin name="thruster_right" filename="libuuv_thruster_plugin.so">
+      <thrusterID>4</thrusterID>
+      <link_name>thruster_right_link</link_name>
+      <commandTopic>/missile_auv/thrusters/id_4/input</commandTopic>
+      <thrustTopic>/missile_auv/thrusters/id_4/thrust</thrustTopic>
+      <maxThrust>100.0</maxThrust>
+      <minThrust>-100.0</minThrust>
+    </plugin>
+  </gazebo>
+  <link name="thruster_right_link">
+    <inertial>
+      <mass value="0.5"/>
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.005"/>
+    </inertial>
+  </link>
+  <joint name="thruster_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="thruster_right_link"/>
+    <origin xyz="0 0 -0.2" rpy="1.5708 0 0"/>
+  </joint>
+
+</robot>

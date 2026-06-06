@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!--
+  导弹形AUV模型 - 最终稳定版本
+  确保水动力学正确配置
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="missile_auv">
+
+  <xacro:macro name="missile_auv_base" params="namespace *gazebo inertial_reference_frame">
+
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="200.0"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="50.0" ixy="0.0" ixz="0.0" iyy="200.0" iyz="0.0" izz="200.0"/>
+      </inertial>
+
+      <!-- 导弹形视觉外观 -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.4" length="2.6"/>
+        </geometry>
+        <material name="missile_yellow">
+          <color rgba="0.8 0.7 0.2 1.0"/>
+        </material>
+      </visual>
+
+      <!-- 碰撞外形 -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.4" length="2.6"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Include RexROV actuators and sensors -->
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_actuators.xacro"/>
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_sensors.xacro"/>
+
+    <!-- 水动力学插件配置 -->
+    <xacro:insert_block name="gazebo"/>
+
+  </xacro:macro>
+
+  <!-- 实例化导弹形AUV -->
+  <xacro:missile_auv_base namespace="missile_auv" inertial_reference_frame="world">
+    <gazebo>
+      <plugin name="missile_auv_hydrodynamics" filename="libuuv_underwater_object_ros_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <link_name>missile_auv/base_link</link_name>
+
+        <!-- 浮力配置 -->
+        <neutrally_buoyant>1</neutrally_buoyant>
+        <volume>0.26</volume>
+        <center_of_buoyancy>0.0 0.0 0.0</center_of_buoyancy>
+
+        <hydrodynamic_model>
+          <type>fossen</type>
+          <added_mass>
+             20.0    0.0     0.0     0.0     0.0     0.0
+             0.0   100.0     0.0     0.0     0.0     0.0
+             0.0     0.0   100.0     0.0     0.0     0.0
+             0.0     0.0     0.0     5.0     0.0     0.0
+             0.0     0.0     0.0    0.0    20.0     0.0
+             0.0     0.0     0.0    0.0     0.0    20.0
+          </added_mass>
+          <linear_damping>
+            -10.0  -20.0  -50.0   -20.0  -50.0  -50.0
+          </linear_damping>
+          <quadratic_damping>
+            -30.0  -50.0  -100.0  -30.0  -80.0  -80.0
+          </quadratic_damping>
+        </hydrodynamic_model>
+      </plugin>
+    </gazebo>
+  </xacro:missile_auv_base>
+
+</robot>

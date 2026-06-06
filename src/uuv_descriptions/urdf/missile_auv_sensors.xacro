@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+  导弹形AUV传感器配置
+  Sensors for Missile-shaped AUV
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="namespace" value="missile_auv"/>
+
+  <!-- ==================== IMU (惯性测量单元) ==================== -->
+  <xacro:default_imu_macro
+    namespace="${namespace}"
+    parent_link="${namespace}/base_link"
+    inertial_reference_frame="world">
+    <origin xyz="0.0 0 0" rpy="0 0 0"/>
+  </xacro:default_imu_macro>
+
+  <!-- ==================== DVL (多普勒测速仪) ==================== -->
+  <xacro:default_dvl_macro
+    namespace="${namespace}"
+    parent_link="${namespace}/base_link"
+    inertial_reference_frame="world">
+    <origin xyz="-1.2 0 -0.15" rpy="0 1.5708 0"/>
+  </xacro:default_dvl_macro>
+
+  <!-- ==================== GPS ==================== -->
+  <xacro:default_gps namespace="${namespace}" parent_link="${namespace}/base_link"/>
+
+  <!-- ==================== 压力传感器 (深度) ==================== -->
+  <xacro:default_pressure_macro namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0.0 0 0" rpy="0 0 0"/>
+  </xacro:default_pressure_macro>
+
+  <!-- ==================== 磁力计 ==================== -->
+  <xacro:default_magnetometer namespace="${namespace}" parent_link="${namespace}/base_link"/>
+
+  <!-- ==================== 姿态传感器 (真值) ==================== -->
+  <xacro:default_pose_3d_macro
+    namespace="${namespace}"
+    parent_link="${namespace}/base_link"
+    inertial_reference_frame="world"/>
+
+  <!-- ==================== RPT (定位传感器) ==================== -->
+  <xacro:default_rpt namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0.8 0 0.1" rpy="0 0 0"/>
+  </xacro:default_rpt>
+
+</robot>

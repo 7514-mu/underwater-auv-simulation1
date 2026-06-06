@@ -1,0 +1,45 @@
+# 水下任务仿真参数配置
+# ROS2 要求使用 node_name / ros__parameters 嵌套格式
+
+acoustic_comm_simulator:
+  ros__parameters:
+    vehicle_1_namespace: "auv_1"
+    vehicle_2_namespace: "auv_2"
+    sound_speed: 1500.0
+    source_level: 180.0
+    noise_level: 70.0
+    directivity_index: 10.0
+    frequency: 25000.0
+    comm_rate: 1.0
+    packet_loss_threshold: 0.3
+    bubble_noise_factor: 50.0
+
+underwater_detector:
+  ros__parameters:
+    namespace: "auv_1"
+    detection_range_max: 80.0
+    detection_range_min: 1.0
+    detection_threshold: 2.0
+    cluster_distance: 2.0
+    min_cluster_size: 3
+    false_positive_rate: 0.02
+    bubble_sonar_degradation: 0.3
+    bubble_false_detect_factor: 0.1
+
+underwater_identifier:
+  ros__parameters:
+    namespace: "auv_1"
+    small_size_max: 1.0
+    medium_size_max: 3.0
+    aspect_ratio_threshold: 3.0
+    color_match_threshold: 0.6
+
+underwater_tracker:
+  ros__parameters:
+    namespace: "auv_1"
+    alpha_filter: 0.3
+    beta_filter: 0.1
+    track_update_rate: 10.0
+    max_coast_time: 5.0
+    prediction_steps: 5
+    gate_distance: 5.0

@@ -1,0 +1,10 @@
+# Thruster Allocation Matrix for Missile AUV (6 DOF x 5 thrusters)
+# Rows: [X, Y, Z, Roll(K), Pitch(M), Yaw(N)]
+# Columns: [thruster_0(main), thruster_1(vert_front), thruster_2(vert_rear),
+#           thruster_3(lat_front), thruster_4(lat_rear)]
+#
+# Note: Roll cannot be actively controlled (passively stable via fins)
+
+/**:
+  ros__parameters:
+    tam: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.8, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, -0.8]

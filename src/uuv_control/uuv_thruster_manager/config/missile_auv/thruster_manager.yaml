@@ -1,0 +1,18 @@
+# Missile AUV Thruster Manager Configuration
+# 5 thrusters: 0=main(surge), 1=vertical_front(heave+pitch), 2=vertical_rear(heave+pitch),
+#              3=lateral_front(sway+yaw), 4=lateral_rear(sway+yaw)
+
+/**:
+  ros__parameters:
+    thruster_manager:
+      tf_prefix: missile_auv
+      base_link: base_link
+      thruster_topic_prefix: thrusters/
+      thruster_topic_suffix: /input
+      thruster_frame_base: thruster_
+      max_thrust: 500.0
+      timeout: -1.0
+      update_rate: 50.0
+      conversion_fcn: proportional
+      conversion_fcn_params:
+        gain: 0.01

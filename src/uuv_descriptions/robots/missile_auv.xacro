@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  Missile-shaped AUV - Complete Model
+  Top-level xacro that assembles base model with hydrodynamics plugin
+-->
+<robot name="missile_auv" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="debug" default="0"/>
+  <xacro:arg name="namespace" default="missile_auv"/>
+  <xacro:arg name="inertial_reference_frame" default="world"/>
+
+  <!-- Include base model -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/missile_auv_base.xacro"/>
+
+  <!-- Hydrodynamic model macro (must be defined before use) -->
+  <xacro:macro name="missile_auv_hydro_model" params="namespace">
+    <link name="${namespace}/base_link">
+      <neutrally_buoyant>0</neutrally_buoyant>
+      <volume>0.195</volume>
+      <center_of_buoyancy>0.0 0.0 0.08</center_of_buoyancy>
+      <hydrodynamic_model>
+        <type>fossen</type>
+        <!-- Added mass: low X (streamlined), high Y/Z -->
+        <added_mass>
+           25.0    0.0     0.0     0.0     0.0     0.0
+           0.0   150.0     0.0     0.0     0.0     0.0
+           0.0     0.0   150.0     0.0     0.0     0.0
+           0.0     0.0     0.0    10.0     0.0     0.0
+           0.0     0.0     0.0     0.0    35.0     0.0
+           0.0     0.0     0.0     0.0     0.0    35.0
+        </added_mass>
+        <linear_damping>
+          -20.0  -80.0  -80.0   -10.0  -30.0  -30.0
+        </linear_damping>
+        <quadratic_damping>
+          -80.0  -300.0  -300.0  -30.0  -100.0  -100.0
+        </quadratic_damping>
+      </hydrodynamic_model>
+    </link>
+  </xacro:macro>
+
+  <!-- Instantiate missile AUV with hydrodynamics plugin -->
+  <xacro:missile_auv_base
+    namespace="$(arg namespace)"
+    inertial_reference_frame="$(arg inertial_reference_frame)">
+    <gazebo>
+      <plugin name="$(arg namespace)_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <debug>$(arg debug)</debug>
+        <xacro:missile_auv_hydro_model namespace="$(arg namespace)"/>
+      </plugin>
+    </gazebo>
+  </xacro:missile_auv_base>
+
+  <!-- Joint state publisher -->
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
+
+</robot>

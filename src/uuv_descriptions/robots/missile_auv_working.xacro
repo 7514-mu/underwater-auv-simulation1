@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+  导弹形AUV模型 - 完全稳定版本
+  基于RexROV的成熟水动力参数
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="missile_auv">
+
+  <!-- includes -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>
+
+  <!-- Parameters - 使用RexROV的成熟参数 -->
+  <xacro:property name="namespace" value="missile_auv"/>
+
+  <xacro:macro name="missile_auv_base" params="namespace *gazebo inertial_reference_frame">
+
+    <link name="${namespace}/base_link">
+      <inertial>
+        <!-- 减轻质量，适合导弹形 -->
+        <mass value="200.0"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="50.0" ixy="0.0" ixz="0.0" iyy="200.0" iyz="0.0" izz="200.0"/>
+      </inertial>
+
+      <!-- 导弹形视觉外观 -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.4" length="2.6"/>
+        </geometry>
+        <material name="missile_yellow">
+          <color rgba="0.8 0.7 0.2 1.0"/>
+        </material>
+      </visual>
+
+      <!-- 碰撞外形 -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="0.4" length="2.6"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- 水动力学模型 - 完全复制RexROV的参数 -->
+    <gazebo>
+      <plugin name="${namespace}_hydrodynamics" filename="libuuv_gazebo_hydro_udtfi_plugin.so">
+        <fluid_density>1028.0</fluid_density>
+        <link_name>${namespace}/base_link</link_name>
+
+        <!-- 设置为正浮力，能够上浮 -->
+        <neutrally_buoyant>1</neutrally_buoyant>
+        <volume>0.26</volume>  <!-- 圆柱体体积：π × 0.4² × 2.6 ≈ 0.26 -->
+        <center_of_buoyancy>0.0 0.0 0.0</center_of_buoyancy>
+
+        <hydrodynamic_model>
+          <type>fossen</type>
+          <!-- 简化的水动力参数，适合轻质量导弹形 -->
+          <added_mass>
+             20.0    0.0     0.0     0.0     0.0     0.0
+             0.0   100.0     0.0     0.0     0.0     0.0
+             0.0     0.0   100.0     0.0     0.0     0.0
+             0.0     0.0     0.0     5.0     0.0     0.0
+             0.0     0.0     0.0    0.0    20.0     0.0
+             0.0     0.0     0.0    0.0     0.0    20.0
+          </added_mass>
+          <linear_damping>
+            -10.0  -20.0  -50.0   -20.0  -50.0  -50.0
+          </linear_damping>
+          <quadratic_damping>
+            -30.0  -50.0  -100.0  -30.0  -80.0  -80.0
+          </quadratic_damping>
+        </hydrodynamic_model>
+      </plugin>
+    </gazebo>
+
+    <!-- Set up hydrodynamic plugin -->
+    <xacro:insert_block name="gazebo"/>
+
+    <!-- Include RexROV actuators and sensors -->
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_actuators.xacro"/>
+    <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_sensors.xacro"/>
+
+  </xacro:macro>
+
+  <!-- Instantiate the missile AUV -->
+  <xacro:missile_auv_base namespace="missile_auv" inertial_reference_frame="world">
+    <gazebo>
+      <plugin name="missile_auv_hydrodynamics" filename="libuuv_gazebo_hydro_udtfi_plugin.so">
+      </plugin>
+    </gazebo>
+  </xacro:missile_auv_base>
+
+</robot>

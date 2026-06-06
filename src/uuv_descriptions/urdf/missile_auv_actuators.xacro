@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+  Missile-shaped AUV Thruster Configuration
+  5 thrusters: 1 main (surge) + 2 vertical (heave/pitch) + 2 lateral (sway/yaw)
+
+  Uses standard UUV thruster macros to ensure compatibility with:
+  - Thruster manager (TAM computation, topic naming)
+  - PID control cascade
+  - Gazebo thruster plugin (libuuv_thruster_ros_plugin.so)
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="namespace" value="missile_auv"/>
+  <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/meshes/prop.dae"/>
+
+  <!-- Thruster macro matching RexROV pattern -->
+  <xacro:macro name="missile_thruster_macro"
+    params="namespace thruster_id *origin">
+    <xacro:thruster_module_first_order_basic_fcn_macro
+      namespace="${namespace}"
+      thruster_id="${thruster_id}"
+      mesh_filename="${prop_mesh_file}"
+      dyn_time_constant="0.05"
+      rotor_constant="0.01">
+      <xacro:insert_block name="origin"/>
+    </xacro:thruster_module_first_order_basic_fcn_macro>
+  </xacro:macro>
+
+  <!-- Thruster 0: Main propulsion (tail, along X-axis forward) -->
+  <xacro:missile_thruster_macro namespace="${namespace}" thruster_id="0">
+    <origin xyz="-1.4 0 0" rpy="0 0 0"/>
+  </xacro:missile_thruster_macro>
+
+  <!-- Thruster 1: Vertical front (+Z thrust, provides heave + pitch) -->
+  <!-- rpy=(0, -pi/2, 0) rotates thrust axis from X to +Z -->
+  <xacro:missile_thruster_macro namespace="${namespace}" thruster_id="1">
+    <origin xyz="0.8 0 0" rpy="0 -1.5708 0"/>
+  </xacro:missile_thruster_macro>
+
+  <!-- Thruster 2: Vertical rear (+Z thrust, provides heave + pitch) -->
+  <xacro:missile_thruster_macro namespace="${namespace}" thruster_id="2">
+    <origin xyz="-0.8 0 0" rpy="0 -1.5708 0"/>
+  </xacro:missile_thruster_macro>
+
+  <!-- Thruster 3: Lateral front (Y-axis thrust, provides sway + yaw) -->
+  <!-- rpy=(0, 0, pi/2) rotates thrust axis from X to Y -->
+  <xacro:missile_thruster_macro namespace="${namespace}" thruster_id="3">
+    <origin xyz="0.8 0 0" rpy="0 0 1.5708"/>
+  </xacro:missile_thruster_macro>
+
+  <!-- Thruster 4: Lateral rear (Y-axis thrust, provides sway + yaw) -->
+  <xacro:missile_thruster_macro namespace="${namespace}" thruster_id="4">
+    <origin xyz="-0.8 0 0" rpy="0 0 1.5708"/>
+  </xacro:missile_thruster_macro>
+
+</robot>

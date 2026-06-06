@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+  Missile-shaped AUV Base Model
+  Torpedo-like streamlined body optimized for forward motion
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Standard UUV framework includes -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>
+
+  <!-- Vehicle parameters -->
+  <xacro:property name="length" value="3.0"/>
+  <xacro:property name="diameter" value="0.3"/>
+  <xacro:property name="mass" value="200.0"/>
+  <xacro:property name="cob" value="0.0 0.0 0.02"/>
+
+  <xacro:macro name="missile_auv_base" params="namespace *gazebo inertial_reference_frame">
+
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0"/>
+        <!-- Slender cylinder: low Ixx (roll), high Iyy/Izz (pitch/yaw) -->
+        <inertia
+          ixx="1.5" ixy="0.0" ixz="0.0"
+          iyy="15.0" iyz="0.0"
+          izz="15.0"/>
+      </inertial>
+
+      <!-- Main body cylinder (oriented along X-axis) -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${diameter/2}" length="${length}"/>
+        </geometry>
+        <material name="missile_gray">
+          <color rgba="0.3 0.35 0.4 1.0"/>
+        </material>
+      </visual>
+
+      <!-- Nose cone (tapered cylinder) -->
+      <visual name="nose_cone">
+        <origin xyz="${length/2 + 0.1} 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${diameter/4}" length="0.3"/>
+        </geometry>
+        <material name="missile_red">
+          <color rgba="0.8 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+
+      <!-- Nose tip -->
+      <visual name="nose_tip">
+        <origin xyz="${length/2 + 0.3} 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <sphere radius="${diameter/8}"/>
+        </geometry>
+        <material name="missile_black">
+          <color rgba="0.1 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+
+      <!-- Tail cone (tapered cylinder) -->
+      <visual name="tail_cone">
+        <origin xyz="${-length/2 - 0.1} 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${diameter/4}" length="0.3"/>
+        </geometry>
+        <material name="missile_gray">
+          <color rgba="0.3 0.35 0.4 1.0"/>
+        </material>
+      </visual>
+
+      <!-- Collision: simplified cylinder -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+        <geometry>
+          <cylinder radius="${diameter/2}" length="${length}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Gazebo plugins passed in from top-level xacro -->
+    <xacro:insert_block name="gazebo"/>
+
+    <!-- Thruster configuration (uses standard UUV macros) -->
+    <xacro:include filename="$(find uuv_descriptions)/urdf/missile_auv_actuators.xacro"/>
+
+    <!-- Sensors -->
+    <xacro:include filename="$(find uuv_descriptions)/urdf/missile_auv_sensors.xacro"/>
+
+  </xacro:macro>
+</robot>

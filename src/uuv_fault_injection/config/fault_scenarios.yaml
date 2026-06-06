@@ -1,0 +1,91 @@
+# AUV Fault Injection Scenarios
+# Predefined fault scenarios for testing
+
+scenarios:
+  # Scenario 1: Single thruster complete failure
+  single_thruster_failure:
+    description: "Single thruster complete failure test"
+    fault_type: 1  # COMPLETE_FAILURE
+    thrusters: [0]  # Front left thruster
+    duration: 10.0
+    expected_behavior: "AUV should compensate with remaining thrusters"
+
+  # Scenario 2: Multiple thrusters partial failure
+  multi_partial_failure:
+    description: "Multiple thrusters at 50% efficiency"
+    fault_type: 2  # PARTIAL_FAILURE
+    thrusters: [0, 1, 4, 5]  # All surge thrusters
+    duration: 15.0
+    expected_behavior: "Reduced forward speed, yaw instability"
+
+  # Scenario 3: Stuck thruster
+  stuck_thruster:
+    description: "Thruster stuck at maximum thrust"
+    fault_type: 3  # STUCK
+    thrusters: [2]  # Middle sway thruster
+    duration: 8.0
+    expected_behavior: "Continuous drift in one direction"
+
+  # Scenario 4: Reversed thrust
+  reversed_thrust:
+    description: "Thruster producing opposite thrust"
+    fault_type: 4  # REVERSE
+    thrusters: [6]  # Heave thruster
+    duration: 10.0
+    expected_behavior: "Opposite vertical movement"
+
+  # Scenario 5: Oscillating thrusters
+  oscillating_thrusters:
+    description: "Random thrust fluctuations"
+    fault_type: 5  # OSCILLATING
+    thrusters: [3, 7]  # Sway and yaw thrusters
+    duration: 12.0
+    expected_behavior: "Erratic movement patterns"
+
+  # Scenario 6: Progressive degradation
+  progressive_degradation:
+    description: "Gradual efficiency loss over time"
+    fault_type: 6  # PROGRESSIVE
+    thrusters: [0, 1, 2, 3, 4, 5]  # All horizontal thrusters
+    duration: 20.0
+    expected_behavior: "Gradual loss of horizontal control"
+
+  # Scenario 7: Critical failure - most thrusters
+  critical_failure:
+    description: "Major system failure - 75% thrusters failed"
+    fault_type: 1  # COMPLETE_FAILURE
+    thrusters: [0, 2, 3, 4, 5, 6]  # Most thrusters
+    duration: 5.0
+    expected_behavior: "Severe control loss, emergency surfacing"
+
+  # Scenario 8: Heave system failure
+  heave_failure:
+    description: "Complete vertical control failure"
+    fault_type: 1  # COMPLETE_FAILURE
+    thrusters: [6]  # Only heave thruster
+    duration: 10.0
+    expected_behavior: "Cannot maintain depth, will sink or float"
+
+# Thruster configuration for RexROV
+thruster_config:
+  rexrov:
+    num_thrusters: 8
+    thruster_names:
+      - "thruster_0_front_left_surge"
+      - "thruster_1_front_right_surge"
+      - "thruster_2_middle_left_sway"
+      - "thruster_3_middle_right_sway"
+      - "thruster_4_rear_left_surge"
+      - "thruster_5_rear_right_surge"
+      - "thruster_6_heave_vertical"
+      - "thruster_7_yaw"
+
+    axes:
+      - [1.0, 0.0, 0.0]  # Surge +X
+      - [1.0, 0.0, 0.0]  # Surge +X
+      - [0.0, 1.0, 0.0]  # Sway +Y
+      - [0.0, 1.0, 0.0]  # Sway +Y
+      - [1.0, 0.0, 0.0]  # Surge +X
+      - [1.0, 0.0, 0.0]  # Surge +X
+      - [0.0, 0.0, 1.0]  # Heave +Z
+      - [0.0, 0.0, 0.0]  # Yaw (torque)
